@@ -8,13 +8,16 @@
       name="description"
       content="Portfolio website for Caden Song, a 6th grade student interested in 3D modeling and design."
     />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Crimson+Pro:wght@400;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="caden-portfolio-styles.css" />
+    <link rel="stylesheet" href="caden-portfolio-styles.css?v=smooth-scroll-3" />
   </head>
   <body>
     <div class="page-shell">
@@ -257,5 +260,35 @@
         </section>
       </main>
     </div>
+    <script>
+      const animatedItems = document.querySelectorAll(
+        ".hero, .section"
+      );
+
+      if ("IntersectionObserver" in window) {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && entry.intersectionRatio >= 0.12) {
+                entry.target.classList.add("is-visible");
+              } else {
+                entry.target.classList.remove("is-visible");
+              }
+            });
+          },
+          {
+            threshold: [0, 0.12, 0.35],
+            rootMargin: "-4% 0px -8% 0px",
+          }
+        );
+
+        animatedItems.forEach((item) => {
+          item.classList.add("reveal-item");
+          revealObserver.observe(item);
+        });
+      } else {
+        animatedItems.forEach((item) => item.classList.add("is-visible"));
+      }
+    </script>
   </body>
 </html>

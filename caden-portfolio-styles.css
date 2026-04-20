@@ -12,6 +12,8 @@
   --radius-lg: 28px;
   --radius-md: 20px;
   --radius-sm: 14px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.2, 0.9, 0.28, 1.18);
 }
 
 * {
@@ -34,6 +36,96 @@ html {
   }
 }
 
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(42px) scale(0.98);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes scrollPop {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--reveal-x, 0), 74px, 0) rotate(var(--reveal-rotate, 0deg)) scale(0.82);
+    filter: blur(10px);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate3d(0, -12px, 0) rotate(0deg) scale(1.045);
+    filter: blur(0);
+  }
+
+  78% {
+    transform: translate3d(0, 5px, 0) rotate(0deg) scale(0.99);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes scrollPopOut {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    filter: blur(0);
+  }
+
+  32% {
+    opacity: 1;
+    transform: translate3d(0, -14px, 0) rotate(0deg) scale(1.035);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--exit-x, var(--reveal-x, 0)), -58px, 0) rotate(var(--exit-rotate, var(--reveal-rotate, 0deg))) scale(0.82);
+    filter: blur(9px);
+  }
+}
+
+@keyframes sectionGlowPop {
+  0% {
+    box-shadow: 0 16px 36px rgba(79, 52, 33, 0.08);
+  }
+
+  45% {
+    box-shadow:
+      0 26px 80px rgba(79, 52, 33, 0.18),
+      0 0 0 6px rgba(201, 93, 52, 0.13);
+  }
+
+  100% {
+    box-shadow: var(--shadow);
+  }
+}
+
+@keyframes revealFlash {
+  0% {
+    opacity: 0;
+    transform: translateX(-90%) skewX(-18deg);
+  }
+
+  42% {
+    opacity: 0.72;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(95%) skewX(-18deg);
+  }
+}
+
 @keyframes drift {
   0%,
   100% {
@@ -42,6 +134,17 @@ html {
 
   50% {
     transform: translateY(-10px);
+  }
+}
+
+@keyframes gridDrift {
+  0%,
+  100% {
+    background-position: 0 0, 0 0;
+  }
+
+  50% {
+    background-position: 18px 24px, 18px 24px;
   }
 }
 
@@ -56,6 +159,23 @@ html {
   }
 }
 
+@keyframes sheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-140%) skewX(-18deg);
+  }
+
+  38%,
+  68% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(140%) skewX(-18deg);
+  }
+}
+
 @keyframes ambientShift {
   0%,
   100% {
@@ -64,6 +184,29 @@ html {
 
   50% {
     background-position: 4% 2%, 96% 24%, 0 0;
+  }
+}
+
+@keyframes borderGlow {
+  0%,
+  100% {
+    border-color: rgba(50, 33, 22, 0.08);
+  }
+
+  50% {
+    border-color: rgba(201, 93, 52, 0.3);
+  }
+}
+
+@keyframes textLift {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -101,6 +244,7 @@ body::before {
     linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
   background-size: 32px 32px;
   mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 82%);
+  animation: gridDrift 22s linear infinite;
 }
 
 .page-shell {
@@ -129,7 +273,23 @@ body::before {
   background:
     linear-gradient(135deg, rgba(255, 249, 241, 0.95), rgba(250, 235, 214, 0.82)),
     var(--surface);
-  animation: fadeUp 850ms ease both;
+  animation: revealUp 950ms var(--ease-out) both;
+}
+
+.hero::before,
+.section::before,
+.highlight-block::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.34) 45%, transparent 62%);
+  opacity: 0;
+  transform: translateX(-45%);
+}
+
+.hero::before {
+  animation: sheen 2.8s 650ms ease both;
 }
 
 .hero-side {
@@ -211,7 +371,7 @@ li {
   margin: 1.25rem 0 0;
   font-size: clamp(1.18rem, 2vw, 1.45rem);
   color: var(--muted);
-  animation: fadeUp 1s ease both;
+  animation: textLift 880ms var(--ease-out) both;
   animation-delay: 120ms;
 }
 
@@ -220,7 +380,7 @@ li {
   flex-wrap: wrap;
   gap: 0.85rem;
   margin-top: 1.7rem;
-  animation: fadeUp 1s ease both;
+  animation: textLift 880ms var(--ease-out) both;
   animation-delay: 220ms;
 }
 
@@ -229,7 +389,7 @@ li {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
   margin-top: 1.5rem;
-  animation: fadeUp 1s ease both;
+  animation: textLift 880ms var(--ease-out) both;
   animation-delay: 320ms;
 }
 
@@ -238,6 +398,13 @@ li {
   border-radius: var(--radius-sm);
   border: 1px solid rgba(50, 33, 22, 0.08);
   background: rgba(255, 255, 255, 0.46);
+  transition: transform 220ms var(--ease-spring), background 220ms ease, border-color 220ms ease;
+}
+
+.hero-snapshot div:hover {
+  transform: translateY(-5px) scale(1.02);
+  border-color: rgba(201, 93, 52, 0.28);
+  background: rgba(255, 255, 255, 0.66);
 }
 
 .hero-snapshot strong,
@@ -269,14 +436,31 @@ li {
   font-size: 0.98rem;
   font-weight: 700;
   text-decoration: none;
-  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  overflow: hidden;
+  position: relative;
+  transition: transform 220ms var(--ease-spring), box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.button::after {
+  content: "";
+  position: absolute;
+  inset: -45% -35%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  opacity: 0;
+  transform: translateX(-140%) skewX(-18deg);
 }
 
 .button:hover,
 .button:focus-visible,
 .profile-card:hover,
 .profile-card:focus-visible {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+}
+
+.button:hover::after,
+.button:focus-visible::after {
+  opacity: 1;
+  animation: sheen 800ms ease;
 }
 
 .button-primary {
@@ -298,7 +482,7 @@ li {
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, rgba(255, 247, 235, 0.95), rgba(236, 224, 204, 0.95));
   border: 1px solid rgba(50, 33, 22, 0.08);
-  animation: fadeUp 1s ease both;
+  animation: revealUp 1s var(--ease-out) both;
   animation-delay: 320ms;
 }
 
@@ -309,14 +493,14 @@ li {
   background: linear-gradient(180deg, rgba(255, 248, 239, 0.96), rgba(239, 226, 205, 0.92));
   border: 1px solid rgba(50, 33, 22, 0.08);
   box-shadow: var(--shadow);
-  animation: fadeUp 980ms ease both;
+  animation: revealUp 980ms var(--ease-out) both;
   animation-delay: 260ms;
-  transition: transform 220ms ease, box-shadow 220ms ease;
+  transition: transform 260ms var(--ease-spring), box-shadow 260ms ease;
 }
 
 .portrait-card:hover,
 .portrait-card:focus-within {
-  transform: translateY(-4px) rotate(-0.4deg);
+  transform: translateY(-7px) rotate(-0.7deg) scale(1.015);
   box-shadow: 0 28px 58px rgba(79, 52, 33, 0.18);
 }
 
@@ -327,6 +511,13 @@ li {
   object-fit: cover;
   border-radius: 22px;
   border: 1px solid rgba(50, 33, 22, 0.08);
+  transition: transform 600ms var(--ease-out), filter 600ms ease;
+}
+
+.portrait-card:hover .portrait-image,
+.portrait-card:focus-within .portrait-image {
+  transform: scale(1.035);
+  filter: saturate(1.08) contrast(1.04);
 }
 
 .portrait-caption {
@@ -356,6 +547,26 @@ li {
   font-size: 1.05rem;
   font-weight: 500;
   text-align: center;
+  animation: borderGlow 5s ease-in-out infinite;
+  transition: transform 220ms var(--ease-spring), background 220ms ease, color 220ms ease;
+}
+
+.focus-list li:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--accent-dark);
+}
+
+.focus-list li:nth-child(2) {
+  animation-delay: 400ms;
+}
+
+.focus-list li:nth-child(3) {
+  animation-delay: 800ms;
+}
+
+.focus-list li:nth-child(4) {
+  animation-delay: 1200ms;
 }
 
 .focus-list li:last-child {
@@ -368,7 +579,7 @@ li {
   border-radius: 30px;
   background: var(--surface);
   backdrop-filter: blur(10px);
-  animation: fadeUp 900ms ease both;
+  animation: revealUp 900ms var(--ease-out) both;
 }
 
 .section-heading {
@@ -379,7 +590,7 @@ li {
   max-width: 42rem;
   margin: 0.95rem 0 0;
   color: var(--muted);
-  animation: fadeUp 1s ease both;
+  animation: textLift 900ms var(--ease-out) both;
   animation-delay: 120ms;
 }
 
@@ -405,14 +616,16 @@ li {
   border-radius: var(--radius-md);
   border: 1px solid rgba(50, 33, 22, 0.08);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 248, 239, 0.96));
-  animation: fadeUp 900ms ease both;
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+  animation: revealUp 900ms var(--ease-out) both;
+  transition: transform 240ms var(--ease-spring), box-shadow 240ms ease, border-color 240ms ease, background 240ms ease;
 }
 
 .card:hover,
 .value-item:hover,
-.contact-card:hover {
-  transform: translateY(-5px);
+.contact-card:hover,
+.profile-card:hover,
+.profile-card:focus-visible {
+  transform: translateY(-7px) scale(1.01);
   box-shadow: 0 18px 36px rgba(79, 52, 33, 0.12);
 }
 
@@ -472,7 +685,7 @@ li {
     linear-gradient(135deg, rgba(35, 62, 57, 0.94), rgba(76, 94, 62, 0.9)),
     var(--surface-strong);
   color: #f8f1e8;
-  animation: fadeUp 950ms ease both;
+  animation: revealUp 950ms var(--ease-out) both;
   animation-delay: 120ms;
 }
 
@@ -497,13 +710,29 @@ li {
 .profile-card {
   text-decoration: none;
   color: inherit;
-  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  transition: transform 240ms var(--ease-spring), border-color 240ms ease, box-shadow 240ms ease;
 }
 
 .profile-card:hover,
 .profile-card:focus-visible {
   border-color: rgba(201, 93, 52, 0.35);
   box-shadow: 0 18px 36px rgba(79, 52, 33, 0.12);
+}
+
+.profile-card h3,
+.contact-card h3,
+.value-item h3,
+.card h3 {
+  transition: color 220ms ease, transform 220ms var(--ease-spring);
+}
+
+.profile-card:hover h3,
+.profile-card:focus-visible h3,
+.contact-card:hover h3,
+.value-item:hover h3,
+.card:hover h3 {
+  color: var(--accent-dark);
+  transform: translateY(-2px);
 }
 
 .values-grid {
@@ -518,6 +747,7 @@ li {
   color: var(--accent-dark);
   text-decoration: none;
   border-bottom: 1px solid rgba(139, 53, 25, 0.25);
+  transition: color 180ms ease, border-color 180ms ease;
 }
 
 .contact-card a:hover,
@@ -528,17 +758,91 @@ li {
 
 .hero-copy h1,
 .section-heading h2 {
-  animation: fadeUp 900ms ease both;
+  animation: textLift 900ms var(--ease-out) both;
 }
 
 .hero-panel,
 .portrait-card,
 .highlight-block {
-  animation-name: fadeUp, softFloat;
+  animation-name: revealUp, softFloat;
   animation-duration: 980ms, 5.5s;
-  animation-timing-function: ease, ease-in-out;
+  animation-timing-function: var(--ease-out), ease-in-out;
   animation-fill-mode: both, both;
   animation-iteration-count: 1, infinite;
+}
+
+.js .reveal-item {
+  opacity: 0;
+  transform: translate3d(0, 36px, 0) scale(0.965);
+  filter: blur(5px);
+  animation: none;
+  transition:
+    opacity 680ms var(--ease-out),
+    transform 680ms var(--ease-out),
+    filter 680ms ease,
+    box-shadow 680ms ease;
+  will-change: transform, opacity, filter;
+}
+
+.js .reveal-item.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+  filter: blur(0);
+}
+
+.js .section.reveal-item {
+  transform-origin: center bottom;
+}
+
+.js .hero.reveal-item {
+  transform-origin: center top;
+}
+
+.js .section .card,
+.js .section .profile-card,
+.js .section .value-item,
+.js .section .contact-card {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 520ms var(--ease-out),
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.js .section.is-visible .card,
+.js .section.is-visible .profile-card,
+.js .section.is-visible .value-item,
+.js .section.is-visible .contact-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.js .section.is-visible .card:nth-child(2),
+.js .section.is-visible .profile-card:nth-child(2),
+.js .section.is-visible .value-item:nth-child(2),
+.js .section.is-visible .contact-card:nth-child(2) {
+  transition-delay: 70ms;
+}
+
+.js .section.is-visible .card:nth-child(3),
+.js .section.is-visible .profile-card:nth-child(3),
+.js .section.is-visible .value-item:nth-child(3),
+.js .section.is-visible .contact-card:nth-child(3) {
+  transition-delay: 130ms;
+}
+
+.js .section.is-visible .card:nth-child(4) {
+  transition-delay: 190ms;
+}
+
+.js .section.is-visible .card:nth-child(5) {
+  transition-delay: 250ms;
+}
+
+.js .section.is-visible .card:nth-child(6) {
+  transition-delay: 310ms;
 }
 
 @media (max-width: 900px) {
@@ -662,5 +966,11 @@ li {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+
+  .js .reveal-item {
+    opacity: 1;
+    transform: none;
+    filter: none;
   }
 }
